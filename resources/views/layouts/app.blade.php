@@ -29,7 +29,7 @@
                 </a>
                 
                 <a class="navbar-brand" href="#" 
-                @click="switchTo('form-user-component')" >
+                @click="switchTo('user-component')" >
                     Usuarios
                 </a>
                 <a class="navbar-brand" href="#"

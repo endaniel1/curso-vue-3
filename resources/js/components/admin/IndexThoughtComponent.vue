@@ -2,9 +2,26 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
 
+            <heading-content-component 
+            @back="pageBack"
+            :title="description"
+            />
+             <search-form-component 
+            :urlSearch="urlSearch"
+            >
+            </search-form-component>
+
+           <keep-alive>
+                <component
+                :addNewComponent="addComponentNew"
+                @goUrl="changeComponent"
+                v-bind:is="endContent"
+                ></component>
+            </keep-alive>
+
             <form-thought-component 
                 @newThought="addThought"></form-thought-component>   
-
+            
             <lists-thought-component 
                 v-for="(thought, index) in thoughts" 
                 :key="thought.id" 
@@ -24,6 +41,12 @@
         },
         data(){
             return {
+                description:"thought",   
+                urlSearch:"thoughts",
+                endContent:"",//no lo agrego aqui para qq cambie de componente porque para q funcione la listo o tabla hay q pasarle el trought pero no es como lo voy hacer
+                addComponentNew: [
+                    "form-thought-component", "trash-thought-component"
+                ],
                 thoughts:[],
             }
         },
@@ -46,6 +69,14 @@
             updateThought(index, thought){
                 console.log("actualizar data a mi variable");
                 this.thoughts[index] = thought;
+            },
+            //lo q eh agregado nuevo
+            pageBack(page){
+                console.log("back desde index thought compontent");
+                this.$parent.switchTo(page+"-component");//llamamos aqui el elemento padre y llamomos a la funcion q cambia de componente
+            },
+            changeComponent(change){
+                this.endContent = change;
             }
         }
     }

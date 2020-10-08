@@ -21,13 +21,21 @@ files.keys().map(key => Vue.component(
 	key.split('/components/admin/').pop().split('.')[0], files(key).default))
  */
 Vue.component('index-thought-component', require('./components/admin/IndexThoughtComponent.vue').default);
-
 Vue.component('form-thought-component', require('./components/admin/FormThoughtComponent.vue').default);
 Vue.component('lists-thought-component', require('./components/admin/ListsThoughtComponent.vue').default);
 
 
-Vue.component('form-user-component', require('./components/admin/FormUserComponent.vue').default);
+Vue.component('user-component', require('./components/admin/UserComponent.vue').default);
+Vue.component('content-user-component', require('./components/admin/ContentUserComponent.vue').default);
+Vue.component('create-user-component', require('./components/admin/CreateUserComponent.vue').default);
+
+
 Vue.component('home-component', require('./components/admin/HomeComponent.vue').default);
+Vue.component('heading-content-component', require('./components/admin/HeadingContentComponent.vue').default);
+Vue.component('body-content-component', require('./components/admin/BodyContentComponent.vue').default);
+Vue.component('footer-content-component', require('./components/admin/FooterContentComponent.vue').default);
+
+Vue.component('search-form-component', require('./components/admin/SearchFormComponent.vue').default);
 
 
 /**
@@ -40,15 +48,15 @@ const app = new Vue({
     el: '#app',
     data: {
         currentPage: 'home-component',
+        refresh:0,
+        refreshComponent: ''
     },
     methods: {
         switchTo: function(component) {
+            if (component == this.currentPage) {
+                this.refreshComponent = component+""+this.refresh++;
+            }
             this.currentPage = component;
-        }
-    },
-    computed: {
-        switchTo: function() {
-            this.currentPage = page;
         }
     }
 })

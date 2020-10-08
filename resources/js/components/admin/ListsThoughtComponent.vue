@@ -2,7 +2,7 @@
     <div class="card">
         <div class="card-header">Publicado en {{thought.created_at}} - ultima Actualizacion {{thought.updated_at}}</div>
         <div class="card-body">
-            <input v-if="editModel" type="text" class="form-control"v-model="thought.description">
+            <input v-if="editModel" type="text" class="form-control" v-model="thought.description">
             <p v-else>{{thought.description}}</p>
         </div>
         <div class="card-footer">
