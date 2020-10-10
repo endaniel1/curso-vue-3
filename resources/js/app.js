@@ -8,6 +8,7 @@ require('./bootstrap');
 
 window.Vue = require('vue');
 
+require('./moment');
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -35,7 +36,7 @@ Vue.component('heading-content-component', require('./components/admin/HeadingCo
 Vue.component('body-content-component', require('./components/admin/BodyContentComponent.vue').default);
 Vue.component('footer-content-component', require('./components/admin/FooterContentComponent.vue').default);
 
-Vue.component('search-form-component', require('./components/admin/SearchFormComponent.vue').default);
+Vue.component('search-input-component', require('./components/admin/SearchInputComponent.vue').default);
 Vue.component('paginator-component', require('./components/admin/PaginatorComponent.vue').default);
 
 

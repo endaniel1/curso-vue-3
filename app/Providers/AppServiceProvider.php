@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Bouncer;
+use Illuminate\Support\Facades\{App, Schema, URL};
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -13,7 +15,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        Schema::defaultStringLength(191);
+
+        Bouncer::tables([
+          'abilities' => 'bouncer_abilities',
+          'permissions' => 'bouncer_permissions',
+          'roles' => 'bouncer_roles',
+          'assigned_roles' => 'bouncer_assigned_roles',
+        ]);
+        
+        if(App::environment('production')) {
+          URL::forceScheme('https');
+        }
     }
 
     /**

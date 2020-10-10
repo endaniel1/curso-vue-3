@@ -1,5 +1,6 @@
 <template>
-    <form method="get" :action="urlSearch" @submit.prevent="search">
+    <form method="get" :action="urlSearch" 
+    @submit.prevent="search">
         <div class="form-row">
             <div class="form-group col-md-5">
                 <label for="search" class="sr-only">Buscar</label>
@@ -43,6 +44,8 @@
                 //tengo q buscar como obtener todos los datos de mi formulario para enviarlo para consultar
                 this.data = [];
                 console.log("a buscar");
+
+                console.log(event);
                 
             }
         }
