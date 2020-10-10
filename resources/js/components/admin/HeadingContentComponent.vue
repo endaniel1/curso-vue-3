@@ -30,7 +30,7 @@
         methods:{
             back(page){
                 console.log("back desde heade content compoenten");
-                console.log( this.$options.data);
+                //console.log( this.$options.data);
                 this.$emit("back", page);
             }
         }

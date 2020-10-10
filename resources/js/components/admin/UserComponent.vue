@@ -3,7 +3,6 @@
         <div class="col-md-8">
             
             <heading-content-component 
-
             @back="pageBack"
             :titlePage="descriptionPage"
             />

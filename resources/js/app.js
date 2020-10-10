@@ -36,6 +36,7 @@ Vue.component('body-content-component', require('./components/admin/BodyContentC
 Vue.component('footer-content-component', require('./components/admin/FooterContentComponent.vue').default);
 
 Vue.component('search-form-component', require('./components/admin/SearchFormComponent.vue').default);
+Vue.component('paginator-component', require('./components/admin/PaginatorComponent.vue').default);
 
 
 /**

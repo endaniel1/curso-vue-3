@@ -55,7 +55,7 @@
                 console.log("cargando data");
                 axios.get("/thoughts").then(response => {
                     this.thoughts = response.data.data;
-                    //console.log(response.data);
+                    //console.log(response.data.data);
                 });
             },
             addThought(thought){

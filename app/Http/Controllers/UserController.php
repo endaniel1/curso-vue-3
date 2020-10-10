@@ -16,9 +16,13 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
-       return view("admin.users.index");
+    public function index(Request $request){
+        if ($request->ajax()) {
+            $users = User::orderBy("id", "ASC")->paginate(10);
+            return $users;
+
+        }
+        return redirect("home");
     }
 
     /**
