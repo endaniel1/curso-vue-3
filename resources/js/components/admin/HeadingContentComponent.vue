@@ -7,9 +7,10 @@
                 :key="index">
                     <a href="#"
                     v-if="titlePage.length > 1 && index + 1 != titlePage.length"
-                    v-on:click="back(title.toLowerCase())">{{title}}</a> 
-                    <p v-else>{{title}}</p>
-                    <span v-if="index + 1 < titlePage.length"> \ &nbsp;</span>
+                    v-on:click="back(title.toLowerCase())">{{title}}</a>               
+                    <span 
+                    v-if="titlePage.length > 1 && index + 1 != titlePage.length">\&nbsp;</span>
+                    <span v-if="index + 1 == titlePage.length">{{title}}</span>
                 </div>
             </div>
 
@@ -29,6 +30,7 @@
         },
         methods:{
             back(page){
+                console.log(page);
                 console.log("back desde heade content compoenten");
                 //console.log( this.$options.data);
                 this.$emit("back", page);

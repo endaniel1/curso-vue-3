@@ -22,6 +22,7 @@ class UserController extends Controller
 
         $roles = Bouncer::role()->all();
         
+        //compruebo si vien algo por ajax o axios
         if ($request->ajax()) {
             if (isset($request->role)) {
                 $users = User::query()
@@ -29,20 +30,14 @@ class UserController extends Controller
                         ->whereIs($request->role)
                         ->orderBy('id', 'ASC')
                         ->paginate(10);
-                $users->each(function($user){
-                    $user->roles;
-                });
             } else {
                 $users = User::query()
                         ->filterBy($filters, $request->only(['search', 'from', 'to']))
                         ->orderBy('id', 'ASC')
                         ->paginate(10);
-                $users->each(function($user){
-                    $user->roles;
-                });
             }
             $users->appends($filters->valid());
-            return $users;
+            return $this->getRolesUsers($users);
 
         }
         return redirect("home");
@@ -111,5 +106,62 @@ class UserController extends Controller
      */
     public function destroy(User $user){        
         $user->delete();
+    }
+
+    /**
+     * Display a listing trashed of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function trash(Request $request){
+        //compruebo si vien algo por ajax o axios
+        if ($request->ajax()) {
+            $users = User::onlyTrashed()->get();
+
+            return $this->getRolesUsers($users);
+        }
+        return redirect("home");
+    }
+
+    /**
+     * Restore the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function restore(Request $request, int $id){
+        //compruebo si vien algo por ajax o axios
+        if ($request->ajax()) {
+            $user = User::onlyTrashed()->where('id', $id)->first();
+
+            $user->restore();
+
+            return ;
+        }
+
+        return redirect("home");
+    }
+
+    /**
+     * Delete the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function delete(Request $request, int $id){
+        //compruebo si vien algo por ajax o axios
+        if ($request->ajax()) {
+            $user = User::onlyTrashed()->where('id', $id)->first();
+
+            $user->forceDelete();
+        }
+
+        return redirect("home");
+    }
+    private function getRolesUsers($users){
+        $users->each(function($user){
+            $user->roles;
+        });
+        return $users;
     }
 }

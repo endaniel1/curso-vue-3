@@ -11,6 +11,7 @@
             :body="componentBody" 
             @goUrl="changeComponent"
             />
+            
         </div>
     </div>
 </template>
@@ -30,7 +31,6 @@
             getDefaultData(){
                 this.descriptionPage = ["Home","User"];
                 this.componentBody = "content-user-component"
-
             },
             pageBack(page){
                 console.log("back desde index user compontent");

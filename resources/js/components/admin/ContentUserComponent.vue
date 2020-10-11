@@ -35,7 +35,7 @@
                 </div>
             </div>
         </form>
-
+        <!--Esto aqui est tentativo ya q se puedo mejorar si en vez de agregar o papelera fuera otra cosa q no sea eso-->
         <div class="d-flex mb-3 justify-content-end">
             <a href="#" class="btn btn-success" @click.prevent="goUrl(addNewComponent[0])">
                 <i class="fas fa-plus-square"></i> Agregar Nuevo
@@ -44,6 +44,7 @@
                 <i class="fas fa-trash-restore"></i> Papelera
             </a>
         </div>
+
         <div class="table-responsive">
             <table class="table table-border ">
                 <thead>

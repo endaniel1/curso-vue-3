@@ -26,7 +26,7 @@
         },
         methods:{
             pageBack(page){
-                console.log("back desde index user compontent");
+                console.log("back desde index body content compontent");
                 this.$parent.switchTo(page+"-component");//llamamos aqui el elemento padre y llamomos a la funcion q cambia de componente
             },
             addDescriptionHeading(descripNew){
