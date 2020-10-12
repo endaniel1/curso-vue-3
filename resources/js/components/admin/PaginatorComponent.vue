@@ -51,8 +51,8 @@
 	    		}
 	    		//controlando el control de la variable desde y si es negativo
 	    		var from=this.datapagination.current_page - this.offset;//compesamos lo de la pagina actual
-	    		if (from<1) {
-	    			from=1;
+	    		if (from < 1) {
+	    			from = 1;
 	    		}
 	    		//controlando el control de la variable hasta y si es mayor a la ultima pagina
 	    		var to=from +(this.offset * 2);

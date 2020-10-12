@@ -56,7 +56,7 @@
                 console.log("buscar users");
                 axios.get("/users/trash").then(response => {
                     this.users = response.data;
-                    console.log(this.users);
+                    //console.log(this.users);
                 });
             },
             restoreUser(user){

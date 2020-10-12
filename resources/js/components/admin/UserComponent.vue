@@ -8,7 +8,7 @@
             />
 
             <body-content-component
-            :body="componentBody" 
+            :body="componentBody"
             @goUrl="changeComponent"
             />
             
@@ -25,6 +25,7 @@
             return{
                 descriptionPage: [],
                 componentBody: "",
+                data:""
             }
         },
         methods:{

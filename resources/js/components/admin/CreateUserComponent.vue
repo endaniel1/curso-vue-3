@@ -12,6 +12,7 @@
     export default {
         mounted() {
             console.log('Component mounted. FormUserComponent.vue')
+            
         },
         data(){
            return{

@@ -30,7 +30,9 @@ Vue.component('lists-thought-component', require('./components/admin/ListsThough
 //componentes para usuarios
 Vue.component('user-component', require('./components/admin/UserComponent.vue').default);
 Vue.component('content-user-component', require('./components/admin/ContentUserComponent.vue').default);
+Vue.component('form-user-component', require('./components/admin/FormUserComponent.vue').default);
 Vue.component('create-user-component', require('./components/admin/CreateUserComponent.vue').default);
+Vue.component('edit-user-component', require('./components/admin/EditUserComponent.vue').default);
 Vue.component('trash-user-component', require('./components/admin/TrashUserComponent.vue').default);
 
 //componenes globales a usar siempre

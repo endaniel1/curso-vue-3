@@ -12,7 +12,7 @@
 
 <script>
    export default {
-        props:["body"],
+        props:["body","dataBody"],
         mounted() {
             console.log('Component mounted. BodyComponent.vue');
         },
@@ -21,7 +21,8 @@
                 addComponentNew : [
                     "create", "trash"
                 ],
-                contentBody : this.body
+                contentBody : this.body,
+                dataComponent : this.dataBody,
             }
         },
         methods:{

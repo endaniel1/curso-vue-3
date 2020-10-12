@@ -81,9 +81,15 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function edit(User $user)
-    {
-        //
+    public function edit(Request $request, User $user){
+        if ($request->ajax()) {
+            $roles = Bouncer::role()->all();
+            return response()->json([
+                "user" => $user,
+                "roles" => $roles
+            ]);
+        }
+        return redirect("home");
     }
 
     /**

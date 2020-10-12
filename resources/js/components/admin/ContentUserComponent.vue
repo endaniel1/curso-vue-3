@@ -70,7 +70,7 @@
                         <td>{{user.created_at | formatDate}}</td>
                         <td class="text-center">
                             <button type="button" class="btn btn-warning" 
-                            v-on:click.prevent="editUser(user)" >
+                            v-on:click.prevent="editUser(user.id)" >
                                 <span class="">Editar</span>
                             </button>
                         </td>
@@ -111,9 +111,10 @@
             }
         },
         methods:{
-            goUrl(component){
+            goUrl(component, data){
                 this.$emit("headingDescription", component);
-                this.$parent.contentBody = component+"-user-component";
+                this.$parent.contentBody = component+"-user-component";             
+                this.$parent.data = data;
             },
             getUsers(page){
                 //console.log("cargando data de users");
@@ -134,9 +135,10 @@
             editUser(user){
                 console.log("edito user");
                 console.log(user);
+                this.goUrl("edit", user);
             },
             deleteUser(user){
-                console.log("elimino user");
+                //console.log("elimino user");
                 axios.delete(`/users/${user.id}`).then(respose => {
                     this.getUsers();
                 });
@@ -145,10 +147,11 @@
                 this.getUsers(page);
             },
             SearchUser(event){
-                console.log("Hola vamoa a buscar");
+                //console.log("Hola vamoa a buscar");
                 this.getUsers();
             },
             viewRoles(role){
+                //para buscar los roles de los usuario
                 if (role[0]) {
                     return role[0].name;
                 }else{

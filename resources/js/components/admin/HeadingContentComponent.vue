@@ -13,7 +13,6 @@
                     <span v-if="index + 1 == titlePage.length">{{title}}</span>
                 </div>
             </div>
-
         </div>
     </div>
 </template>
