@@ -18,7 +18,8 @@
 </template>
 
 <script>
-    export default {        
+    export default {    
+        name:"heading-content-component",
         props:["titlePage"],
         mounted() {
            

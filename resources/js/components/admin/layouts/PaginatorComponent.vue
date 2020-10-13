@@ -26,7 +26,8 @@
 	</div>
 </template>
 <script>
-	export default {        
+	export default {     
+		name:"paginator-component",   
         props:["datapagination"],
         created() {
         },

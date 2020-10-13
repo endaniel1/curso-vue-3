@@ -8,6 +8,7 @@
 
 <script>
     export default {
+        name:"footer-content-component",
         mounted() {
             console.log('Component mounted. EndContentComponent.vue')
         },

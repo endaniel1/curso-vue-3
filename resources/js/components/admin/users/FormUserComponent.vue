@@ -69,6 +69,7 @@
 
 <script>
     export default {
+        name:"form-user-component",
         props:["dataUser","getDataUser","actionForm"],
         created() {
             //console.log('Component mounted. FormUserComponent.vue')

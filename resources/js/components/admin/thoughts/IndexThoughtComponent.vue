@@ -36,6 +36,7 @@
 
 <script>
     export default {
+        name:"index-thought-component",
         mounted() {
             this.getThought();
         },

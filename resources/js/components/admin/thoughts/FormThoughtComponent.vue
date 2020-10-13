@@ -14,6 +14,7 @@
 
 <script>
     export default {
+        name:"form-thought-component",
         mounted() {
             //console.log('Component mounted.')
         },

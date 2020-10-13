@@ -41,7 +41,8 @@
 </template>
 
 <script>
-    export default {      
+    export default {     
+        name:"trash-user-component", 
         mounted() {
            console.log("hola desde TrashUserComponent");
            this.getUserTrash();

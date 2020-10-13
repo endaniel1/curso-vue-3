@@ -18,6 +18,7 @@
 
 <script>
     export default {
+        name:"user-component",
         created() {
            this.getDefaultData();
         },

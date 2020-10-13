@@ -95,6 +95,7 @@
 
 <script>
     export default {
+        name:"content-user-component",
         props:["addNewComponent"],
         mounted() {
             this.getUsers();

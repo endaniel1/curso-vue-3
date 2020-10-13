@@ -26,6 +26,7 @@
 
 <script>
     export default {
+        name:"edit-user-component",
         created() {
             console.log('Component mounted. EditUserComponent.vue')
             console.log(this.$parent.data)

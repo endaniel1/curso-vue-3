@@ -26,6 +26,7 @@
 
 <script>
     export default {
+        name:"create-user-component",
         created() {
             console.log('Component mounted. CreateUserComponent.vue')
             //console.log(this.$parent)

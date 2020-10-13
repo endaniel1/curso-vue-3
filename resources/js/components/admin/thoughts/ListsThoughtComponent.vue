@@ -21,6 +21,7 @@
 
 <script>
     export default {
+        name:"lists-thought-component",
         props:["thought"],
         data(){
             return {
