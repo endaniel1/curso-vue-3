@@ -23,21 +23,21 @@
             <div class="row">
                 <legend class="col-form-label col-md-1 pt-0">Rol:</legend>
                 <div class="col-md-11">
-                    <!--Aqui van los roles pero en un ciclo-->
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input class="custom-control-input" type="radio" name="role" id="role1" v-model="role" value="admin" />
-                        <label class="custom-control-label" for="role1">Admin</label>
-                    </div>
-                    <div class="custom-control custom-radio custom-control-inline">
-                        <input class="custom-control-input" type="radio" name="role" id="role2" v-model="role" value="user" />
-                        <label class="custom-control-label" for="role2" >Users</label>
+                    <!---->
+                    <div v-for="(role,index) in getRoles" :key="role.name" 
+                    class="custom-control custom-radio custom-control-inline">
+                        <input class="custom-control-input" type="radio" name="roleSearch"
+                        :id="role.name" 
+                        v-model="roleSearch" 
+                        :value="role.name" />
+                        <label class="custom-control-label" :for="role.name">{{role.name.toUpperCase()}}</label>
                     </div>
                 </div>
             </div>
         </form>
         <!--Esto aqui est tentativo ya q se puedo mejorar si en vez de agregar o papelera fuera otra cosa q no sea eso-->
         <div class="d-flex mb-3 justify-content-end">
-            <a href="#" class="btn btn-success" @click.prevent="goUrl(addNewComponent[0])">
+            <a href="#" class="btn btn-success" @click.prevent="goUrl(addNewComponent[0],'create')">
                 <i class="fas fa-plus-square"></i> Agregar Nuevo
             </a>
             <a href="#" class="btn btn-danger ml-2" @click.prevent="goUrl(addNewComponent[1])">
@@ -102,12 +102,13 @@
         data(){
             return{
                 url : "users",
-                users : [],
+                users : {},
                 paginator:{},
                 search:'',
                 from:'',
                 to:'',
-                role:''
+                roleSearch:'',
+                getRoles:[]
             }
         },
         methods:{
@@ -118,17 +119,20 @@
             },
             getUsers(page){
                 //console.log("cargando data de users");
-                axios.get("/users?page="+page+"&search="+this.search+"&from="+this.from+"&to="+this.to+"&role="+this.role).then(response => {
-                    this.users = response.data.data;
-
+                axios.get("/users?page="+page+"&search="+this.search+"&from="+this.from+"&to="+this.to+"&role="+this.roleSearch).then(response => {
+                    console.log(response.data);
+                    this.users = response.data.users.data;
+                    if(this.getRoles == ''){
+                        this.getRoles = response.data.roles
+                    }
                     //datos de la paginacion
                     this.paginator = {
-                        total        :response.data.total,
-                        current_page :response.data.current_page,
-                        per_page     :response.data.per_page,
-                        last_page    :response.data.last_page,
-                        from         :response.data.from,
-                        to           :response.data.to,
+                        total        :response.data.users.total,
+                        current_page :response.data.users.current_page,
+                        per_page     :response.data.users.per_page,
+                        last_page    :response.data.users.last_page,
+                        from         :response.data.users.from,
+                        to           :response.data.users.to,
                     }
                 });
             },

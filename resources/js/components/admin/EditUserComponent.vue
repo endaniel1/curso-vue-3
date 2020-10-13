@@ -8,7 +8,7 @@
                 <div class="card-body">
                     <div v-if="errors != ''" class="alert alert-danger" role="alert">
                         <ul>                        
-                            <li v-for="(error,index) in errors">{{ $error }}</li>
+                            <li v-for="(error,index) in errors">{{ error[0] }}</li>
                         </ul>
                     </div>
                 </div>
@@ -16,6 +16,8 @@
                 :dataUser="user"
                 :getDataUser="urlGetDataUser"
                 :actionForm="urlForm"
+                @errors="dataError"
+                @successData="success"
                 />
             </div>
         </div>
@@ -26,7 +28,7 @@
     export default {
         created() {
             console.log('Component mounted. EditUserComponent.vue')
-            //console.log(this.$parent.data)
+            console.log(this.$parent.data)
             this.getData(this.$parent.data)
             this.$parent.data = ""//para eliminar los datos del componente padre q ya no los nesecito
         },
@@ -34,15 +36,29 @@
            return{
             user : "",
             errors : [],
-            urlForm : "update",
-            rolesUser:"",
-            urlGetDataUser:""
+            urlForm : "",
+            rolesUser : "",
+            urlGetDataUser : ""
            }
         },
         methods:{
             getData(data){
                 this.user = this.$parent.data;
-                this.urlGetDataUser = "users/"+this.$parent.data+"/edit";                
+                this.urlGetDataUser = "users/"+this.$parent.data+"/edit";
+                this.urlForm = this.$parent.data+"/update";                
+            },
+            dataError(dataErrors){
+                console.log("aqui van los errores");
+                this.errors = dataErrors
+                console.log(dataErrors);
+            },
+            success(mensageSuccess){
+                this.errors =  [];
+                console.log("cambiar de pagina");
+                console.log(mensageSuccess);
+                //aqui va para los mensajes 
+                //lo hago asi porque aqui va integrado vuex
+                this.$parent.$parent.pageBack("user")
             }
         }
     }

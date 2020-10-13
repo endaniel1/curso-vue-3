@@ -27,16 +27,16 @@
                 <a class="navbar-brand" href="{{ url('/') }}">
                     {{ config('app.name', 'Laravel') }}
                 </a>
-                
-                <a class="navbar-brand" href="#" 
-                @click="switchTo('user-component')" >
+                @if(Auth::user())
+                <a class="navbar-brand" href="home" 
+                @click.prevent="switchTo('user-component')" >
                     Usuarios
                 </a>
-                <a class="navbar-brand" href="#"
-                @click="switchTo('index-thought-component')">
+                <a class="navbar-brand" href="users"
+                @click.prevent="switchTo('index-thought-component')">
                     Pensamientos
                 </a>
-
+                @endif
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>
                 </button>

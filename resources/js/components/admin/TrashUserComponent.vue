@@ -68,6 +68,7 @@
             destroyUser(user){                
                 axios.patch("/users/"+user.id+"/delete").then(response => {
                     console.log("destroido usuario correctament");
+                    console.log("faltan mensaje de eliminacion");
                     this.getUserTrash();
                 });
             },

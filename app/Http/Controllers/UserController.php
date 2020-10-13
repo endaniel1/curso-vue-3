@@ -6,6 +6,8 @@ use App\Models\User;
 use App\Queries\UserFilter;
 use Bouncer;
 use Illuminate\Http\Request;
+use App\Http\Requests\Users\{AdminCreateUserRequest, AdminUpdateUserRequest};
+//use App\Http\Requests\AdminCreateUserRequest;
 
 class UserController extends Controller
 {
@@ -28,16 +30,19 @@ class UserController extends Controller
                 $users = User::query()
                         ->filterBy($filters, $request->only(['search', 'from', 'to']))
                         ->whereIs($request->role)
-                        ->orderBy('id', 'ASC')
+                        ->orderBy('id', 'DESC')
                         ->paginate(10);
             } else {
                 $users = User::query()
                         ->filterBy($filters, $request->only(['search', 'from', 'to']))
-                        ->orderBy('id', 'ASC')
+                        ->orderBy('id', 'DESC')
                         ->paginate(10);
             }
             $users->appends($filters->valid());
-            return $this->getRolesUsers($users);
+            return response()->json([
+                "users" => $this->getRolesUsers($users),
+                "roles" => $roles
+            ]);
 
         }
         return redirect("home");
@@ -48,9 +53,16 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
+    public function create(Request $request){
+        if ($request->ajax()) {
+            $roles = Bouncer::role()->all();
+            $user = new User;
+            return response()->json([
+                "user" => $user,
+                "roles" => $roles
+            ]);
+        }        
+        return redirect("home");
     }
 
     /**
@@ -59,9 +71,9 @@ class UserController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
-    {
-        //
+    public function store(AdminCreateUserRequest $request, User $user){
+        $request->createProfile($user);
+        return "Usuario Creado Correctamente";
     }
 
     /**
@@ -70,8 +82,7 @@ class UserController extends Controller
      * @param  \App\Models\User  $thought
      * @return \Illuminate\Http\Response
      */
-    public function show(User $user)
-    {
+    public function show(User $user){
         //
     }
 
@@ -82,6 +93,7 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function edit(Request $request, User $user){
+        //compruebo si vien algo por ajax o axios
         if ($request->ajax()) {
             $roles = Bouncer::role()->all();
             return response()->json([
@@ -99,9 +111,13 @@ class UserController extends Controller
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
-    {
-        //
+    public function update(AdminUpdateUserRequest $request, User $user){
+        //compruebo si vien algo por ajax o axios
+        if ($request->ajax()) {
+            $request->updateProfile($user);
+            return "Usuario Actualizado Correctamente";
+        }
+        return redirect("home");
     }
 
     /**
@@ -160,10 +176,12 @@ class UserController extends Controller
             $user = User::onlyTrashed()->where('id', $id)->first();
 
             $user->forceDelete();
+            return ;
         }
 
         return redirect("home");
     }
+
     private function getRolesUsers($users){
         $users->each(function($user){
             $user->roles;

@@ -2062,12 +2062,13 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       url: "users",
-      users: [],
+      users: {},
       paginator: {},
       search: '',
       from: '',
       to: '',
-      role: ''
+      roleSearch: '',
+      getRoles: []
     };
   },
   methods: {
@@ -2080,16 +2081,22 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       //console.log("cargando data de users");
-      axios.get("/users?page=" + page + "&search=" + this.search + "&from=" + this.from + "&to=" + this.to + "&role=" + this.role).then(function (response) {
-        _this.users = response.data.data; //datos de la paginacion
+      axios.get("/users?page=" + page + "&search=" + this.search + "&from=" + this.from + "&to=" + this.to + "&role=" + this.roleSearch).then(function (response) {
+        console.log(response.data);
+        _this.users = response.data.users.data;
+
+        if (_this.getRoles == '') {
+          _this.getRoles = response.data.roles;
+        } //datos de la paginacion
+
 
         _this.paginator = {
-          total: response.data.total,
-          current_page: response.data.current_page,
-          per_page: response.data.per_page,
-          last_page: response.data.last_page,
-          from: response.data.from,
-          to: response.data.to
+          total: response.data.users.total,
+          current_page: response.data.users.current_page,
+          per_page: response.data.users.per_page,
+          last_page: response.data.users.last_page,
+          from: response.data.users.from,
+          to: response.data.users.to
         };
       });
     },
@@ -2145,14 +2152,58 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
-  mounted: function mounted() {
-    console.log('Component mounted. FormUserComponent.vue');
+  created: function created() {
+    console.log('Component mounted. CreateUserComponent.vue'); //console.log(this.$parent)
+
+    this.getData(this.$parent.data);
+    this.$parent.data = ""; //para eliminar los datos del componente padre q ya no los nesecito
   },
   data: function data() {
-    return {};
+    return {
+      user: "",
+      errors: [],
+      urlForm: "",
+      rolesUser: "",
+      urlGetDataUser: ""
+    };
   },
-  methods: {}
+  methods: {
+    getData: function getData(data) {
+      this.user = this.$parent.data;
+      this.urlGetDataUser = "users/" + this.$parent.data;
+      this.urlForm = "store";
+    },
+    dataError: function dataError(dataErrors) {
+      console.log("aqui van los errores");
+      this.errors = dataErrors;
+      console.log(dataErrors);
+    },
+    success: function success(mensageSuccess) {
+      this.errors = [];
+      console.log("cambiar de pagina");
+      console.log(mensageSuccess); //aqui va para los mensajes 
+      //lo hago asi porque aqui va integrado vuex
+
+      this.$parent.$parent.pageBack("user");
+    }
+  }
 });
 
 /***/ }),
@@ -2190,10 +2241,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   created: function created() {
-    console.log('Component mounted. EditUserComponent.vue'); //console.log(this.$parent.data)
-
+    console.log('Component mounted. EditUserComponent.vue');
+    console.log(this.$parent.data);
     this.getData(this.$parent.data);
     this.$parent.data = ""; //para eliminar los datos del componente padre q ya no los nesecito
   },
@@ -2201,7 +2254,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       user: "",
       errors: [],
-      urlForm: "update",
+      urlForm: "",
       rolesUser: "",
       urlGetDataUser: ""
     };
@@ -2210,6 +2263,20 @@ __webpack_require__.r(__webpack_exports__);
     getData: function getData(data) {
       this.user = this.$parent.data;
       this.urlGetDataUser = "users/" + this.$parent.data + "/edit";
+      this.urlForm = this.$parent.data + "/update";
+    },
+    dataError: function dataError(dataErrors) {
+      console.log("aqui van los errores");
+      this.errors = dataErrors;
+      console.log(dataErrors);
+    },
+    success: function success(mensageSuccess) {
+      this.errors = [];
+      console.log("cambiar de pagina");
+      console.log(mensageSuccess); //aqui va para los mensajes 
+      //lo hago asi porque aqui va integrado vuex
+
+      this.$parent.$parent.pageBack("user");
     }
   }
 });
@@ -2366,35 +2433,92 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ __webpack_exports__["default"] = ({
   props: ["dataUser", "getDataUser", "actionForm"],
   created: function created() {
-    console.log('Component mounted. FormUserComponent.vue');
+    //console.log('Component mounted. FormUserComponent.vue')
     this.getData();
   },
   data: function data() {
     return {
       roles: [],
-      user: [],
-      dataRole: []
+      user: {},
+      dataRole: [],
+      formErrors: []
     };
   },
   methods: {
     getData: function getData() {
       var _this = this;
 
-      console.log("buscamos los datos");
+      //console.log("buscamos los datos para el formulario");
       console.log(this.dataUser);
       console.log(this.getDataUser);
       console.log(this.actionForm);
       axios.get(this.getDataUser).then(function (response) {
-        console.log(response.data);
+        //console.log(response.data);
         _this.roles = response.data.roles;
         _this.user = response.data.user;
       });
     },
     submitForm: function submitForm() {
-      console.log("Enviando datos");
+      var _this2 = this;
+
+      if (this.actionForm == "store") {
+        console.log(this.dataRole);
+        axios.post("users", this.processUser()).then(function (response) {
+          _this2.resetData();
+
+          _this2.$emit("successData", "Usuario Creado Con Existo");
+        })["catch"](function (errors) {
+          console.clear();
+
+          _this2.getError(errors.response.data.errors);
+        });
+      } else if (this.actionForm == this.dataUser + "/update") {
+        console.log("enviar para actualizar");
+        axios.put("users/" + this.dataUser, this.processUser()).then(function (response) {
+          _this2.resetData();
+
+          _this2.$emit("successData", "Usuario Actualizado Con Existo");
+        })["catch"](function (errors) {
+          console.clear();
+
+          _this2.getError(errors.response.data.errors);
+        });
+      } else {
+        console.log("Error no se puedo enviar el formulario");
+      } //console.log("Enviando datos");
+
+    },
+    getError: function getError(errors) {
+      this.formErrors = errors;
+      this.$emit("errors", errors);
+    },
+    processUser: function processUser() {
+      return {
+        name: this.user.name,
+        email: this.user.email,
+        password: this.user.password,
+        password_confirmation: this.user.password_confirmation,
+        role: this.dataRole
+      };
+    },
+    resetData: function resetData() {
+      roles: [];
+
+      user: {}
+
+      ;
+
+      dataRole: [];
     }
   }
 });
@@ -2807,6 +2931,7 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.patch("/users/" + user.id + "/delete").then(function (response) {
         console.log("destroido usuario correctament");
+        console.log("faltan mensaje de eliminacion");
 
         _this3.getUserTrash();
       });
@@ -60193,91 +60318,57 @@ var render = function() {
               _vm._v("Rol:")
             ]),
             _vm._v(" "),
-            _c("div", { staticClass: "col-md-11" }, [
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "custom-control custom-radio custom-control-inline"
-                },
-                [
-                  _c("input", {
-                    directives: [
+            _c(
+              "div",
+              { staticClass: "col-md-11" },
+              _vm._l(_vm.getRoles, function(role, index) {
+                return _c(
+                  "div",
+                  {
+                    key: role.name,
+                    staticClass:
+                      "custom-control custom-radio custom-control-inline"
+                  },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.roleSearch,
+                          expression: "roleSearch"
+                        }
+                      ],
+                      staticClass: "custom-control-input",
+                      attrs: {
+                        type: "radio",
+                        name: "roleSearch",
+                        id: role.name
+                      },
+                      domProps: {
+                        value: role.name,
+                        checked: _vm._q(_vm.roleSearch, role.name)
+                      },
+                      on: {
+                        change: function($event) {
+                          _vm.roleSearch = role.name
+                        }
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "label",
                       {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.role,
-                        expression: "role"
-                      }
-                    ],
-                    staticClass: "custom-control-input",
-                    attrs: {
-                      type: "radio",
-                      name: "role",
-                      id: "role1",
-                      value: "admin"
-                    },
-                    domProps: { checked: _vm._q(_vm.role, "admin") },
-                    on: {
-                      change: function($event) {
-                        _vm.role = "admin"
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "label",
-                    {
-                      staticClass: "custom-control-label",
-                      attrs: { for: "role1" }
-                    },
-                    [_vm._v("Admin")]
-                  )
-                ]
-              ),
-              _vm._v(" "),
-              _c(
-                "div",
-                {
-                  staticClass:
-                    "custom-control custom-radio custom-control-inline"
-                },
-                [
-                  _c("input", {
-                    directives: [
-                      {
-                        name: "model",
-                        rawName: "v-model",
-                        value: _vm.role,
-                        expression: "role"
-                      }
-                    ],
-                    staticClass: "custom-control-input",
-                    attrs: {
-                      type: "radio",
-                      name: "role",
-                      id: "role2",
-                      value: "user"
-                    },
-                    domProps: { checked: _vm._q(_vm.role, "user") },
-                    on: {
-                      change: function($event) {
-                        _vm.role = "user"
-                      }
-                    }
-                  }),
-                  _vm._v(" "),
-                  _c(
-                    "label",
-                    {
-                      staticClass: "custom-control-label",
-                      attrs: { for: "role2" }
-                    },
-                    [_vm._v("Users")]
-                  )
-                ]
-              )
-            ])
+                        staticClass: "custom-control-label",
+                        attrs: { for: role.name }
+                      },
+                      [_vm._v(_vm._s(role.name.toUpperCase()))]
+                    )
+                  ]
+                )
+              }),
+              0
+            )
           ])
         ]
       ),
@@ -60291,7 +60382,7 @@ var render = function() {
             on: {
               click: function($event) {
                 $event.preventDefault()
-                return _vm.goUrl(_vm.addNewComponent[0])
+                return _vm.goUrl(_vm.addNewComponent[0], "create")
               }
             }
           },
@@ -60449,22 +60540,63 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _vm._m(0)
+  return _c("div", { staticClass: "row justify-content-md-center" }, [
+    _c("div", { staticClass: "col-md-8" }, [
+      _c(
+        "div",
+        { staticClass: "card shadow mb-4" },
+        [
+          _vm._m(0),
+          _vm._v(" "),
+          _c("div", { staticClass: "card-body" }, [
+            _vm.errors != ""
+              ? _c(
+                  "div",
+                  {
+                    staticClass: "alert alert-danger",
+                    attrs: { role: "alert" }
+                  },
+                  [
+                    _c(
+                      "ul",
+                      _vm._l(_vm.errors, function(error, index) {
+                        return _c("li", [_vm._v(_vm._s(error[0]))])
+                      }),
+                      0
+                    )
+                  ]
+                )
+              : _vm._e()
+          ]),
+          _vm._v(" "),
+          _c("form-user-component", {
+            attrs: {
+              dataUser: _vm.user,
+              getDataUser: _vm.urlGetDataUser,
+              actionForm: _vm.urlForm
+            },
+            on: { errors: _vm.dataError, successData: _vm.success }
+          })
+        ],
+        1
+      )
+    ])
+  ])
 }
 var staticRenderFns = [
   function() {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "card" }, [
-      _c("div", { staticClass: "card-header" }, [
-        _vm._v("En que estás Pensando")
-      ]),
-      _vm._v(" "),
-      _c("form", { attrs: { action: "", "accept-charset": "utf-8" } }, [
-        _vm._v("\n       formulario de agregar\n    ")
-      ])
-    ])
+    return _c(
+      "div",
+      { staticClass: "card-header bg-primary text-white py-3" },
+      [
+        _c("h6", { staticClass: "m-0 font-weight-bold" }, [
+          _vm._v("Agregar Usuario")
+        ])
+      ]
+    )
   }
 ]
 render._withStripped = true
@@ -60508,7 +60640,7 @@ var render = function() {
                     _c(
                       "ul",
                       _vm._l(_vm.errors, function(error, index) {
-                        return _c("li", [_vm._v(_vm._s(_vm.$error))])
+                        return _c("li", [_vm._v(_vm._s(error[0]))])
                       }),
                       0
                     )
@@ -60522,7 +60654,8 @@ var render = function() {
               dataUser: _vm.user,
               getDataUser: _vm.urlGetDataUser,
               actionForm: _vm.urlForm
-            }
+            },
+            on: { errors: _vm.dataError, successData: _vm.success }
           })
         ],
         1
@@ -60712,6 +60845,9 @@ var render = function() {
               }
             ],
             staticClass: "form-control",
+            class: {
+              "is-invalid": _vm.formErrors != "" && _vm.formErrors.name
+            },
             attrs: {
               type: "text",
               name: "name",
@@ -60731,7 +60867,17 @@ var render = function() {
             }
           }),
           _vm._v(" "),
-          _c("div", { staticClass: "invalid-feedback" })
+          _c("div", { staticClass: "invalid-feedback" }, [
+            _vm._v(
+              "\n                " +
+                _vm._s(
+                  _vm.formErrors.name
+                    ? _vm.formErrors.name[0]
+                    : "Nombre es Requerido!"
+                ) +
+                "\n            "
+            )
+          ])
         ])
       ]),
       _vm._v(" "),
@@ -60749,6 +60895,9 @@ var render = function() {
               }
             ],
             staticClass: "form-control",
+            class: {
+              "is-invalid": _vm.formErrors != "" && _vm.formErrors.email
+            },
             attrs: {
               type: "email",
               name: "email",
@@ -60768,11 +60917,102 @@ var render = function() {
             }
           }),
           _vm._v(" "),
-          _c("div", { staticClass: "invalid-feedback" })
+          _c("div", { staticClass: "invalid-feedback" }, [
+            _vm._v(
+              "\n                   " +
+                _vm._s(
+                  _vm.formErrors.email
+                    ? _vm.formErrors.email[0]
+                    : "Email es Requerido!"
+                ) +
+                "\n            "
+            )
+          ])
         ])
       ]),
       _vm._v(" "),
-      _vm._m(0),
+      _c("div", { staticClass: "form-row" }, [
+        _c("div", { staticClass: "form-group col-md-6" }, [
+          _c("label", { attrs: { for: "password" } }, [_vm._v("Contraseña")]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.user.password,
+                expression: "user.password"
+              }
+            ],
+            staticClass: "form-control",
+            class: {
+              "is-invalid": _vm.formErrors != "" && _vm.formErrors.password
+            },
+            attrs: {
+              type: "password",
+              name: "password",
+              id: "password",
+              placeholder: "Contraseña",
+              required: ""
+            },
+            domProps: { value: _vm.user.password },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.user, "password", $event.target.value)
+              }
+            }
+          }),
+          _vm._v(" "),
+          _c("span", { staticClass: "invalid-feedback" }, [
+            _vm._v(
+              "\n                " +
+                _vm._s(
+                  _vm.formErrors.password
+                    ? _vm.formErrors.password[0]
+                    : "Password es Requerido!"
+                ) +
+                "\n            "
+            )
+          ])
+        ]),
+        _vm._v(" "),
+        _c("div", { staticClass: "form-group col-md-6" }, [
+          _c("label", { attrs: { for: "password_confirmation" } }, [
+            _vm._v("Confirmar Contraseña")
+          ]),
+          _vm._v(" "),
+          _c("input", {
+            directives: [
+              {
+                name: "model",
+                rawName: "v-model",
+                value: _vm.user.password_confirmation,
+                expression: "user.password_confirmation"
+              }
+            ],
+            staticClass: "form-control",
+            attrs: {
+              type: "password",
+              name: "password_confirmation",
+              id: "password_confirmation",
+              placeholder: "Confirmar Contraseña",
+              required: ""
+            },
+            domProps: { value: _vm.user.password_confirmation },
+            on: {
+              input: function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.$set(_vm.user, "password_confirmation", $event.target.value)
+              }
+            }
+          })
+        ])
+      ]),
       _vm._v(" "),
       _c(
         "fieldset",
@@ -60798,11 +61038,17 @@ var render = function() {
                     }
                   ],
                   staticClass: "custom-control-input",
-                  attrs: { type: "radio", name: "role", id: "role.name" },
-                  domProps: { checked: _vm._q(_vm.dataRole, null) },
+                  class: {
+                    "is-invalid": _vm.formErrors != "" && _vm.formErrors.roles
+                  },
+                  attrs: { type: "radio", name: "role", id: role.name },
+                  domProps: {
+                    value: role.name,
+                    checked: _vm._q(_vm.dataRole, role.name)
+                  },
                   on: {
                     change: function($event) {
-                      _vm.dataRole = null
+                      _vm.dataRole = role.name
                     }
                   }
                 }),
@@ -60811,64 +61057,34 @@ var render = function() {
                   "label",
                   {
                     staticClass: "custom-control-label",
-                    attrs: { for: "role.name" }
+                    attrs: { for: role.name }
                   },
-                  [_vm._v(_vm._s(role.name))]
+                  [_vm._v(_vm._s(role.name.toUpperCase()))]
                 )
               ]
             )
           }),
           _vm._v(" "),
-          _c("div", { staticClass: "invalid-feedback" })
+          _c("div", { staticClass: "invalid-feedback" }, [
+            _vm._v(
+              "\n             " +
+                _vm._s(
+                  _vm.formErrors.roles
+                    ? _vm.formErrors.roles[0]
+                    : "Rol es Requerido!"
+                ) +
+                "\n        "
+            )
+          ])
         ],
         2
       ),
       _vm._v(" "),
-      _vm._m(1)
+      _vm._m(0)
     ]
   )
 }
 var staticRenderFns = [
-  function() {
-    var _vm = this
-    var _h = _vm.$createElement
-    var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "form-row" }, [
-      _c("div", { staticClass: "form-group col-md-6" }, [
-        _c("label", { attrs: { for: "password" } }, [_vm._v("Contraseña")]),
-        _vm._v(" "),
-        _c("input", {
-          staticClass: "form-control",
-          attrs: {
-            type: "password",
-            name: "password",
-            id: "password",
-            placeholder: "Contraseña",
-            required: ""
-          }
-        }),
-        _vm._v(" "),
-        _c("span", { staticClass: "invalid-feedback" })
-      ]),
-      _vm._v(" "),
-      _c("div", { staticClass: "form-group col-md-6" }, [
-        _c("label", { attrs: { for: "password_confirmation" } }, [
-          _vm._v("Confirmar Contraseña")
-        ]),
-        _vm._v(" "),
-        _c("input", {
-          staticClass: "form-control",
-          attrs: {
-            type: "password",
-            name: "password_confirmation",
-            id: "password_confirmation",
-            placeholder: "Confirmar Contraseña",
-            required: ""
-          }
-        })
-      ])
-    ])
-  },
   function() {
     var _vm = this
     var _h = _vm.$createElement
@@ -74109,15 +74325,14 @@ __webpack_require__.r(__webpack_exports__);
 /*!*************************************************************!*\
   !*** ./resources/js/components/admin/FormUserComponent.vue ***!
   \*************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _FormUserComponent_vue_vue_type_template_id_d18a4e9a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./FormUserComponent.vue?vue&type=template&id=d18a4e9a& */ "./resources/js/components/admin/FormUserComponent.vue?vue&type=template&id=d18a4e9a&");
 /* harmony import */ var _FormUserComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FormUserComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/admin/FormUserComponent.vue?vue&type=script&lang=js&");
-/* harmony reexport (unknown) */ for(var __WEBPACK_IMPORT_KEY__ in _FormUserComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__) if(["default"].indexOf(__WEBPACK_IMPORT_KEY__) < 0) (function(key) { __webpack_require__.d(__webpack_exports__, key, function() { return _FormUserComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__[key]; }) }(__WEBPACK_IMPORT_KEY__));
-/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
 
@@ -74147,7 +74362,7 @@ component.options.__file = "resources/js/components/admin/FormUserComponent.vue"
 /*!**************************************************************************************!*\
   !*** ./resources/js/components/admin/FormUserComponent.vue?vue&type=script&lang=js& ***!
   \**************************************************************************************/
-/*! no static exports found */
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
